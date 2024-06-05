@@ -4,5 +4,4 @@ resources:
 - ../base
 patches:
 
-- path: 001_provenance-engine-service.yaml
-- path: 002_provenance-engine-deployment
+- path: 002_provenance-engine-deployment.yaml
