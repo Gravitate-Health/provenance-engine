@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - 001_provenance-engine-service.yaml
   - 002_provenance-engine-deployment.yaml
+  - 003_provenance-engine-vs.yaml

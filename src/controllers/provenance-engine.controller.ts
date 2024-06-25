@@ -75,6 +75,9 @@ export class PingController {
     // Iterate over all provenances
     
     let provenanceEntries = provenanceResult["entry"];
+    if (!provenanceEntries || provenanceEntries.length === 0) { 
+      return [];
+    }
     let newTargetCounter = 0;
     console.log("Provenance entries: ", provenanceEntries.length);
     for (let i in provenanceEntries) {
