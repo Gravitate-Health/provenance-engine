@@ -29,12 +29,12 @@ spec:
     spec:
       containers:
         - name: provenance-engine
-          image: gravitate-registry.cr.de-fra.ionos.com/provenance-engine:latest
+          image: gravitate-registry.cr.de-fra.ionos.com/provenance-engine:v0.3.0
           resources: {}
           imagePullPolicy: Always
           env:
             - name: ENVIRONMENT
-              value: "dev"
+              value: "prod"
           ports:
             - containerPort: 3000
               protocol: TCP

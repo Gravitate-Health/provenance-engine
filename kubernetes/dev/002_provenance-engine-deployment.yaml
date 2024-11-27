@@ -24,6 +24,8 @@ spec:
     spec:
       containers:
         - name: provenance-engine
+          image: gravitate-registry.cr.de-fra.ionos.com/provenance-engine:latest
+          resources: {}
           env:
             - name: ENVIRONMENT
               value: "dev"
