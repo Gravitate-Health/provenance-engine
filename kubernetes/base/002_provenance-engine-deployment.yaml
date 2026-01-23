@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: provenance-engine
-          image: gravitate-registry.cr.de-fra.ionos.com/provenance-engine:latest
+          image: ghcr.io/gravitate-health/provenance-engine:latest
           resources: {}
           imagePullPolicy: Always
           env:
