@@ -1,0 +1,8 @@
+apiVersion: v2
+name: provenance-engine
+description: A Helm chart for deploying provenance-engine
+type: application
+# Chart version — bump this when the chart itself changes
+version: 0.1.0
+# Application version — reflects the Docker image tag built from the repo
+appVersion: "0.3.0"

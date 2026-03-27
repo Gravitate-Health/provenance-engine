@@ -1,0 +1,28 @@
+{{- if eq .Values.networking.type "istio" }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "provenance-engine.fullname" . }}
+  labels:
+    {{- include "provenance-engine.labels" . | nindent 4 }}
+spec:
+  hosts:
+    {{- toYaml .Values.networking.istio.hosts | nindent 4 }}
+  gateways:
+    - {{ .Values.networking.istio.gateway }}
+  http:
+    - retries:
+        attempts: {{ .Values.networking.istio.retries.attempts }}
+      match:
+        - uri:
+            prefix: {{ .Values.networking.istio.prefix }}
+        - uri:
+            exact: {{ .Values.networking.istio.exactMatch }}
+      rewrite:
+        uri: {{ .Values.networking.istio.rewrite | quote }}
+      route:
+        - destination:
+            host: {{ include "provenance-engine.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+            port:
+              number: {{ .Values.service.port }}
+{{- end }}

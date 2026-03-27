@@ -73,3 +73,70 @@ Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
 understand how you can continue to add features to this application.
 
 [![LoopBack](https://github.com/loopbackio/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
+
+---
+
+## Deployment
+
+The service is packaged as a Helm chart located at `charts/provenance-engine/` and published to GitHub Container Registry (GHCR) as an OCI artifact on every push to `main` and every version tag (`v*`).
+
+### Deploy via Helm (OCI)
+
+No need to clone the repository — pull and install directly from the registry:
+
+```bash
+# Login to the registry (required for private packages)
+helm registry login ghcr.io
+
+# Install directly from GHCR
+helm install my-release oci://ghcr.io/gravitate-health/charts/provenance-engine --version 0.1.0
+
+# Install with custom values
+helm install my-release oci://ghcr.io/gravitate-health/charts/provenance-engine \
+  --version 0.1.0 \
+  --set image.tag=0.3.0 \
+  --set networking.type=istio
+```
+
+To upgrade an existing release:
+
+```bash
+helm upgrade my-release oci://ghcr.io/gravitate-health/charts/provenance-engine --version <new-version>
+```
+
+#### Networking modes
+
+Set `networking.type` in your values to control how external traffic is routed:
+
+| Value     | Behaviour |
+|-----------|-----------|
+| `istio`   | Creates an Istio `VirtualService` bound to an existing gateway (default) |
+| `ingress` | Creates a standard Kubernetes `Ingress` resource |
+| `none`    | No external routing resource is created |
+
+Example — switch to standard Ingress:
+
+```bash
+helm install my-release oci://ghcr.io/gravitate-health/charts/provenance-engine \
+  --version 0.1.0 \
+  --set networking.type=ingress \
+  --set networking.ingress.hostname=provenance.example.com
+```
+
+### Local Development
+
+After cloning the repository, use the chart in `charts/provenance-engine/`:
+
+```bash
+# Lint the chart for errors
+helm lint charts/provenance-engine
+
+# Render templates locally without installing (useful for reviewing output)
+helm template my-release charts/provenance-engine
+
+# Render with custom values file
+helm template my-release charts/provenance-engine -f my-values.yaml
+
+# Dry-run install against a live cluster
+helm install my-release charts/provenance-engine --dry-run --debug
+```

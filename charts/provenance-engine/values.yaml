@@ -1,0 +1,84 @@
+# Default values for provenance-engine.
+# This is a YAML-formatted file — declare variables to be substituted into your templates.
+
+# Number of pod replicas to deploy
+replicaCount: 1
+
+image:
+  repository: ghcr.io/gravitate-health/provenance-engine
+  # Overrides the image tag. Defaults to the chart's appVersion when left empty.
+  tag: ""
+  # Options: Always | IfNotPresent | Never
+  pullPolicy: Always
+
+# Optional list of pull secrets for private registries, e.g.:
+# imagePullSecrets:
+#   - name: ghcr-credentials
+imagePullSecrets: []
+
+# Override the chart name used in resource names/labels
+nameOverride: ""
+# Override the fully-qualified resource name
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+
+# Non-sensitive environment variables injected into the pod via a ConfigMap.
+# Add or override key-value pairs as needed.
+config:
+  ENVIRONMENT: "dev"
+
+# Container resource requests and limits.
+# Ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+# Leaving this as {} means no requests/limits are set (Kubernetes defaults apply).
+resources: {}
+  # limits:
+  #   cpu: 250m
+  #   memory: 256Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# ---------------------------------------------------------------------------
+# Networking
+# Controls how external traffic reaches this service.
+#
+#   type: istio   → render a VirtualService that attaches to an Istio gateway
+#                   (the gateway itself is assumed to be managed externally)
+#   type: ingress → render a standard Kubernetes Ingress resource
+#   type: none    → no external routing resource is created
+# ---------------------------------------------------------------------------
+networking:
+  type: istio
+
+  # Istio VirtualService settings — only used when networking.type is "istio"
+  istio:
+    # Name of the Istio Gateway object this VirtualService should bind to.
+    # That Gateway is expected to be provisioned by another chart or operator.
+    gateway: gh-gateway
+    hosts:
+      - "*"
+    # URI prefix that routes traffic to this service
+    prefix: /provenance/engine/
+    # Exact URI that also routes to this service
+    exactMatch: /provenance/engine
+    # Rewrite the URI before forwarding to the service
+    rewrite: "/"
+    retries:
+      attempts: 0
+
+  # Ingress settings — only used when networking.type is "ingress"
+  ingress:
+    # IngressClass name (e.g. nginx, traefik). Leave empty to use cluster default.
+    className: ""
+    # Hostname for the Ingress rule (e.g. provenance.example.com)
+    hostname: ""
+    path: /provenance/engine
+    # Options: Prefix | Exact | ImplementationSpecific
+    pathType: Prefix
+    # Extra annotations (e.g. rewrite rules, TLS issuers)
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # cert-manager.io/cluster-issuer: letsencrypt-prod

@@ -1,0 +1,27 @@
+{{- if eq .Values.networking.type "ingress" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "provenance-engine.fullname" . }}
+  labels:
+    {{- include "provenance-engine.labels" . | nindent 4 }}
+  {{- with .Values.networking.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.networking.ingress.className }}
+  ingressClassName: {{ .Values.networking.ingress.className }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.networking.ingress.hostname | quote }}
+      http:
+        paths:
+          - path: {{ .Values.networking.ingress.path }}
+            pathType: {{ .Values.networking.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "provenance-engine.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+{{- end }}
